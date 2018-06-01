@@ -20,7 +20,7 @@ class RemoteLogger(object):
         self.channel = channel
 
         INFLUXDB_LOG_ENABLED = (config != False and INFLUXDB_ENABLED)
-
+        INFLUXDB_LOG_ENABLED = False
         if INFLUXDB_LOG_ENABLED:
             self.client = InfluxDBClient(
                 config["host"],
