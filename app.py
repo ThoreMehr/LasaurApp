@@ -70,7 +70,7 @@ def start():
 
     if config['sensors']['use'] and not dummy_mode:
         try:
-            sensor_serial = serial.Serial(config['sensors']['port'], config['sensors']['baud'], timeout=1)
+            sensor_serial = serial.Serial(config['sensors']['port'], int(config['sensors']['baud']), timeout=1)
             time.sleep(1)
             sensor_serial.flushInput()
             threading.Thread(target=check_sensors).start()
@@ -239,11 +239,8 @@ def serial_handler(connect):
         # print 'js is asking to connect serial'
         if not SerialManager.is_connected():
             try:
-                global SERIAL_PORT, BITSPERSECOND, GUESS_PREFIX
-                if not SERIAL_PORT:
-                    SERIAL_PORT = SerialManager.match_device(GUESS_PREFIX, BITSPERSECOND)
-                SerialManager.connect(SERIAL_PORT, BITSPERSECOND)
-                ret = "Serial connected to %s:%d." % (SERIAL_PORT, BITSPERSECOND) + '<br>'
+                SerialManager.connect(config['machine']['port'], int(config['machine']['baud']))
+                ret = "Serial connected to %s:%d." % (config['machine']['port'], int(config['machine']['baud'])) + '<br>'
                 time.sleep(1.0)  # allow some time to receive a prompt/welcome
                 SerialManager.flush_input()
                 SerialManager.flush_output()
@@ -378,7 +375,7 @@ argparser.add_argument('--dummy', dest='dummy', action='store_true',
                        default=False, help='use this for developing without hardware')
 args = argparser.parse_args()
 
-if args.dummy or config.get("dummy_mode", False):
+if config['machine']['dummy_mode']:
     print("starting in Dummy Mode")
     setDummyMode()
     start()
